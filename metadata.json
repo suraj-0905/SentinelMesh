@@ -1,0 +1,8 @@
+{
+  "name": "SentinelMesh — AI Agent Security Firewall",
+  "description": "Next-generation runtime firewall protecting AI agents against malicious tool abuse, prompt injections, unauthorized resource access, directory traversal, and data exfiltration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Connection verification doc
+    match /test/{docId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // User profile documents - strict isolation
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Agent configurations
+    match /agents/{agentId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    // Security Policies
+    match /policies/{policyId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    // Audit logs - append-only, immutable
+    match /audit_events/{eventId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    // Security incident alerts
+    match /alerts/{alertId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+  }
+}
